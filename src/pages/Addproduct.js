@@ -3,10 +3,12 @@ import Dropzone from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import { getallBrands } from "../features/brand/brandSlice";
 import { getAllPcategories } from "../features/productCategory/ProductCategorySlice";
-
+import { getColors } from "../features/color/colorSlice";
+import { Select } from "antd";
 import { uploadImg, delImg } from "../features/upload/uploadSlice";
-import { createProduct } from "../features/product/productSlice";
-import { useNavigate } from "react-router-dom";
+import { createProduct, updateProduct } from "../features/product/productSlice";
+import TextField from "@mui/material/TextField";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Addproduct = () => {
   const [title, setTitle] = useState("");
@@ -14,52 +16,116 @@ const Addproduct = () => {
   const [price, setPrice] = useState(0);
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
+  const [tags, setTags] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [images, setImages] = useState([]);
+  const [color, setColor] = useState([]);
 
   const imageState = useSelector((state) => state.upload.images);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { prodId } = useParams();
 
   useEffect(() => {
     dispatch(getallBrands());
+    dispatch(getColors());
     dispatch(getAllPcategories());
   }, []);
 
   const brandState = useSelector((state) => state.brand.brands);
   const catState = useSelector((state) => state.pCategory.pCategories);
-  const newProduct = useSelector((state) => state.product);
+  const productState = useSelector((state) => state.product.products);
+  const colorState = useSelector((state) => state.color.colors);
+
+  useEffect(() => {
+    if (prodId) {
+      const foundProduct = productState.find(
+        (product) => product._id === prodId.toString()
+      );
+      console.log(foundProduct);
+      if (foundProduct) {
+        setTitle(foundProduct.title);
+        setDescription(foundProduct.description);
+        setPrice(foundProduct.price);
+        setBrand(foundProduct.brand);
+        setCategory(foundProduct.category);
+        setTags(foundProduct.tags);
+        setQuantity(foundProduct.quantity);
+        setColor(foundProduct.color);
+      } else {
+        setTitle("");
+        setDescription("");
+        setPrice("");
+        setBrand("");
+        setCategory("");
+        setTags("");
+        setQuantity("");
+        setColor("");
+      }
+    }
+  }, [prodId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      createProduct({
-        title,
-        description,
-        price,
-        brand,
-        category,
-        quantity,
-        images,
-      })
-    );
+
+    if (prodId) {
+      dispatch(
+        updateProduct({
+          prod: {
+            title,
+            description,
+            price,
+            brand,
+            category,
+            quantity,
+            images,
+            tags,
+            color,
+          },
+          _id: prodId,
+        })
+      );
+    } else {
+      dispatch(
+        createProduct({
+          title,
+          description,
+          price,
+          brand,
+          category,
+          quantity,
+          images,
+          tags,
+          color,
+        })
+      );
+    }
 
     setTimeout(() => {
       navigate("/admin/list-product");
-    }, [2000]);
+    }, [300]);
     setTitle("");
     setDescription("");
     setPrice("");
     setBrand("");
     setCategory("");
     setQuantity("");
+    setColor("");
   };
 
   const img = [];
-  imageState.forEach((i) => {
+  imageState?.forEach((i) => {
     img.push({
       public_id: i.public_id,
       url: i.url,
+    });
+  });
+
+  const colorOpt = [];
+  colorState?.forEach((i) => {
+    colorOpt.push({
+      label: i.title,
+      value: i._id,
     });
   });
 
@@ -67,16 +133,22 @@ const Addproduct = () => {
     setImages(img);
   }, [imageState]);
 
+  const handleColors = (value) => {
+    setColor(value);
+  };
+
   return (
     <div>
-      <h3 className="mb-4">Add Product</h3>
+      <h3 className="mb-4">{prodId ? "Edit" : "Add"} Product</h3>
       <div>
         <form onSubmit={handleSubmit}>
           <div className="mt-4">
-            <input
+            <TextField
+              className="w-full p-3 h-14 rounded mb-5 "
+              id="outlined-basic"
+              label="Enter Product Title"
+              variant="outlined"
               type="text"
-              className="block w-full p-3 h-14 rounded mb-5 "
-              placeholder="Enter Product Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -90,6 +162,7 @@ const Addproduct = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
+
           <div className="mt-4">
             <input
               type="number"
@@ -128,6 +201,30 @@ const Addproduct = () => {
               </option>
             ))}
           </select>
+
+          <select
+            onChange={(e) => setTags(e.target.value)}
+            value={tags}
+            className="block w-full p-3 mb-3"
+            id=""
+          >
+            <option value="" disabled>
+              Select Category
+            </option>
+            <option value="featured">Featured</option>
+            <option value="popular">Popular</option>
+            <option value="special">Special</option>
+          </select>
+
+          <Select
+            mode="multiple"
+            allowClear
+            className="w-full inline-block h-[40px]"
+            placeholder="Select Colors"
+            defaultValue={color}
+            onChange={(e) => handleColors(e)}
+            options={colorOpt}
+          />
 
           <div className="mt-4">
             <input
@@ -173,7 +270,7 @@ const Addproduct = () => {
           </div>
           <div>
             <button type="submit" className="button-btn">
-              Add Product
+              {prodId ? "Edit" : "Add"} Product
             </button>
           </div>
         </form>

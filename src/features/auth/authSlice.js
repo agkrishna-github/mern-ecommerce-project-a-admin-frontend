@@ -2,12 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { base_url } from "../../utils/base_url";
 
-const getUserfromLocalStorage = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user"))
-  : null;
-
 const initialState = {
-  user: getUserfromLocalStorage,
+  user: null,
   orders: [],
   isError: false,
   isSuccess: false,
@@ -20,13 +16,9 @@ export const adminlogin = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       const response = await axios.post(`${base_url}user/admin-login`, user);
-      if (response.data) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-      }
-
-      return response.data;
+      return response?.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -34,11 +26,17 @@ export const adminlogin = createAsyncThunk(
 export const getAllOrders = createAsyncThunk(
   "order/get-orders",
   async (user, thunkAPI) => {
+    const { auth } = thunkAPI.getState();
     try {
-      const response = await axios.get(`${base_url}user/getallorders`);
+      const response = await axios.get(`${base_url}user/getallorders`, {
+        headers: {
+          Authorization: `Bearer ${auth?.user?.token}`,
+          Accept: "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  AiOutlineBgColors,
   AiOutlineDashboard,
   AiOutlineShoppingCart,
   AiOutlineUser,
@@ -9,6 +10,7 @@ import { BiCategoryAlt } from "react-icons/bi";
 import { ImBlog } from "react-icons/im";
 import { IoIosNotifications } from "react-icons/io";
 import { FaBloggerB, FaClipboardList } from "react-icons/fa";
+import { IoHomeOutline } from "react-icons/io5";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -52,6 +54,23 @@ const MainLayout = () => {
                 label: "Customers",
               },
               {
+                key: "homepage",
+                icon: <IoHomeOutline />,
+                label: "Home Page",
+                children: [
+                  {
+                    key: "addhomedetails",
+                    icon: <AiOutlineShoppingCart className="text-[14px]" />,
+                    label: "Add Details",
+                  },
+                  {
+                    key: "homedetailslist",
+                    icon: <AiOutlineShoppingCart className="text-[14px]" />,
+                    label: "Home Details list",
+                  },
+                ],
+              },
+              {
                 key: "Catalog",
                 icon: <AiOutlineShoppingCart />,
                 label: "Catalog",
@@ -85,6 +104,16 @@ const MainLayout = () => {
                     key: "list-category",
                     icon: <BiCategoryAlt className="text-[14px]" />,
                     label: "Category List",
+                  },
+                  {
+                    key: "color",
+                    icon: <AiOutlineBgColors className="text-[14px]" />,
+                    label: "Color",
+                  },
+                  {
+                    key: "list-color",
+                    icon: <AiOutlineBgColors className="text-[14px]" />,
+                    label: "Color List",
                   },
                 ],
               },

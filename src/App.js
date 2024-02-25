@@ -15,6 +15,10 @@ import Addblogcat from "./pages/Addblogcat";
 import AddCat from "./pages/AddCat";
 import Addbrand from "./pages/AddBrand";
 import Addproduct from "./pages/Addproduct";
+import AddColor from "./pages/AddColor";
+import ColorList from "./pages/Colorlist";
+import Homepage from "./pages/Homepage";
+import AddHomeDetails from "./pages/AddHomeDetails";
 
 function App() {
   return (
@@ -24,6 +28,8 @@ function App() {
         <Route path="/admin" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="enquiries" element={<Enquiries />} />
+          <Route path="homedetailslist" element={<Homepage />} />
+          <Route path="addhomedetails" element={<AddHomeDetails />} />
           <Route path="blog-list" element={<Bloglist />} />
           <Route path="blog" element={<AddBlog />} />
           <Route path="blog/:blogId" element={<AddBlog />} />
@@ -40,6 +46,9 @@ function App() {
           <Route path="brand/:brandId" element={<Addbrand />} />
           <Route path="list-product" element={<Productlist />} />
           <Route path="product" element={<Addproduct />} />
+          <Route path="product/:prodId" element={<Addproduct />} />
+          <Route path="color" element={<AddColor />} />
+          <Route path="list-color" element={<ColorList />} />
         </Route>
       </Routes>
     </BrowserRouter>

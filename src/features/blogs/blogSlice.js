@@ -13,11 +13,17 @@ const initialState = {
 export const createblog = createAsyncThunk(
   "blogs/createblog",
   async (newBlog, thunkAPI) => {
+    const { auth } = thunkAPI.getState();
     try {
-      const response = await axios.post(`${base_url}blog/`, newBlog);
+      const response = await axios.post(`${base_url}blog/`, newBlog, {
+        headers: {
+          Authorization: `Bearer ${auth?.user?.token}`,
+          Accept: "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -25,11 +31,18 @@ export const createblog = createAsyncThunk(
 export const getAllBlogs = createAsyncThunk(
   "blogs/getAllBlogs",
   async (newBlog, thunkAPI) => {
+    const { auth } = thunkAPI.getState();
+
     try {
-      const response = await axios.get(`${base_url}blog/`);
-      return response.data;
+      const response = await axios.get(`${base_url}blog/`, {
+        headers: {
+          Authorization: `Bearer ${auth?.user?.token}`,
+          Accept: "application/json",
+        },
+      });
+      return response?.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -37,11 +50,18 @@ export const getAllBlogs = createAsyncThunk(
 export const deleteBlog = createAsyncThunk(
   "blogs/deleteBlog",
   async (id, thunkAPI) => {
+    const { auth } = thunkAPI.getState();
+
     try {
-      const response = await axios.delete(`${base_url}blog/${id}`);
-      return response.data;
+      const response = await axios.delete(`${base_url}blog/${id}`, {
+        headers: {
+          Authorization: `Bearer ${auth?.user?.token}`,
+          Accept: "application/json",
+        },
+      });
+      return response?.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -49,17 +69,28 @@ export const deleteBlog = createAsyncThunk(
 export const updateBlog = createAsyncThunk(
   "blogs/updateBlog",
   async (updateBlog, thunkAPI) => {
+    const { auth } = thunkAPI.getState();
+
     console.log(updateBlog);
     try {
-      const response = await axios.put(`${base_url}blog/${updateBlog.id}`, {
-        title: updateBlog.title,
-        category: updateBlog.category,
-        description: updateBlog.description,
-      });
+      const response = await axios.put(
+        `${base_url}blog/${updateBlog.id}`,
+        {
+          title: updateBlog.title,
+          category: updateBlog.category,
+          description: updateBlog.description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.user?.token}`,
+            Accept: "application/json",
+          },
+        }
+      );
       console.log(response.data);
       return response.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );

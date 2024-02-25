@@ -4,7 +4,10 @@ import { AiFillDelete, AiOutlineEye } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getAllProducts } from "../features/product/productSlice";
+import {
+  getAllProducts,
+  deleteAProduct,
+} from "../features/product/productSlice";
 
 const columns = [
   {
@@ -42,6 +45,13 @@ const Productlist = () => {
   }, []);
   const { products } = useSelector((state) => state.product);
 
+  const deleteProduct = (id) => {
+    dispatch(deleteAProduct(id));
+    setTimeout(() => {
+      dispatch(getAllProducts());
+    }, [300]);
+  };
+
   const data1 = [];
   for (let i = 0; i < products.length; i++) {
     data1.push({
@@ -52,12 +62,16 @@ const Productlist = () => {
       price: `${products[i].price}`,
       action: (
         <>
-          <Link to="/" className=" ">
+          <Link to={`/admin/product/${products[i]._id}`} className=" ">
             <BiEdit />
           </Link>
-          <Link className="ms-3" to="/">
+          <button
+            className=""
+            to="/"
+            onClick={() => deleteProduct(products[i]._id)}
+          >
             <AiFillDelete />
-          </Link>
+          </button>
         </>
       ),
     });

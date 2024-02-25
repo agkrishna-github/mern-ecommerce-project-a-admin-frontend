@@ -19,7 +19,6 @@ export const uploadImg = createAsyncThunk(
         formData.append("images", data[i]);
       }
       const response = await axios.post(`${base_url}upload/`, formData);
-      console.log(response);
       return response.data;
     } catch (error) {
       thunkAPI.rejectWithValue(error);

@@ -28,16 +28,18 @@ const columns = [
 
 const Categorylist = () => {
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(true);
-
-  const deletecategory = (id) => {
-    setOpen(!open);
-    dispatch(deletePcategory(id));
-  };
 
   useEffect(() => {
     dispatch(getAllPcategories());
-  }, [open]);
+  }, []);
+
+  const deletecategory = (id) => {
+    dispatch(deletePcategory(id));
+
+    setTimeout(() => {
+      dispatch(getAllPcategories());
+    }, 200);
+  };
 
   const { pCategories } = useSelector((state) => state.pCategory);
 

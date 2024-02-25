@@ -22,6 +22,33 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+export const deleteAProduct = createAsyncThunk(
+  "products/deleteAProduct",
+  async (proId, thunkAPI) => {
+    try {
+      const response = await axios.delete(`${base_url}product/${proId}`);
+      return response.data;
+    } catch (error) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async (updatedProduct, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `${base_url}product/${updatedProduct._id}`,
+        updatedProduct.prod
+      );
+      return response.data;
+    } catch (error) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const getAllProducts = createAsyncThunk(
   "products/getAllProducts",
   async (i, thunkAPI) => {
@@ -65,6 +92,38 @@ const productSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(getAllProducts.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deleteAProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteAProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.deletedProduct = action.payload;
+        state.message = "Product deleted";
+      })
+      .addCase(deleteAProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.updatedProduct = action.payload;
+        state.message = "Product deleted";
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
